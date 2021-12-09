@@ -1,6 +1,8 @@
 package com.plcoding.currencyconverter.di
 
+import android.content.Context
 import com.plcoding.currencyconverter.data.CurrencyApi
+import com.plcoding.currencyconverter.databinding.ActivityMainBinding
 import com.plcoding.currencyconverter.main.DefaultMainRepository
 import com.plcoding.currencyconverter.main.MainRepository
 import com.plcoding.currencyconverter.util.DispatcherProvider
@@ -8,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit

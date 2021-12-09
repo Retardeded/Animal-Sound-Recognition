@@ -3,7 +3,6 @@ package com.plcoding.currencyconverter.main
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plcoding.currencyconverter.data.models.Rates
 import com.plcoding.currencyconverter.util.DispatcherProvider
 import com.plcoding.currencyconverter.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow

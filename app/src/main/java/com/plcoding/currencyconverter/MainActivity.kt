@@ -3,19 +3,29 @@ package com.plcoding.currencyconverter
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.plcoding.currencyconverter.databinding.ActivityMainBinding
+import com.plcoding.currencyconverter.soundprocessing.GraphHandler
 import com.plcoding.currencyconverter.main.MainViewModel
+import com.plcoding.currencyconverter.soundprocessing.RecordHandler
+import com.plcoding.currencyconverter.soundprocessing.RecordHandler.Companion.isPlaying
+import com.plcoding.currencyconverter.soundprocessing.RecordHandler.Companion.isRecording
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var graphHandler: GraphHandler
+    lateinit var recordHandler: RecordHandler
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,11 +33,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnConvert.setOnClickListener {
-            viewModel.convert(
-                binding.etFrom.text.toString()
-            )
-        }
+        graphHandler = GraphHandler(binding.graphTime, binding.graphAplitude, binding.graphFreqFull)
+        recordHandler = RecordHandler(graphHandler, "${externalCacheDir?.absolutePath}/audiometers.3gp")
 
         lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
@@ -50,4 +57,77 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        graphHandler.initGraphView()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        GlobalScope.launch(Dispatchers.IO) {
+            when (item?.itemId) {
+                R.id.device_access_mic -> {
+                    recordHandler.startRecording()
+                    invalidateOptionsMenu()
+                }
+                R.id.device_access_mic_muted -> {
+                    recordHandler.stopRecording()
+                    invalidateOptionsMenu()
+                }
+                R.id.device_access_audio_play -> {
+                    recordHandler.startPlaying(binding.tvResult, binding.textAnimalName)
+                    invalidateOptionsMenu()
+                }
+                R.id.device_access_audio_stop -> {
+                    recordHandler.stopPlaying()
+                    invalidateOptionsMenu()
+                }
+                R.id.get_sounds -> {
+                    viewModel.convert(
+                        binding.textAnimalName.text.toString()
+                    )
+                }
+            }
+            return@launch
+        }
+
+        return item?.let { super.onOptionsItemSelected(it) }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val recordAudioOption = menu!!.findItem(R.id.device_access_mic)
+        val stopRecordAudioOption = menu.findItem(R.id.device_access_mic_muted)
+        val playSoundOption = menu.findItem(R.id.device_access_audio_play)
+        val stopPlaySoundOption = menu.findItem(R.id.device_access_audio_stop)
+
+        if (isRecording) {
+            changeMenuOptionVisibility(recordAudioOption, false)
+            changeMenuOptionVisibility(stopRecordAudioOption, true)
+        } else {
+            changeMenuOptionVisibility(recordAudioOption, true)
+            changeMenuOptionVisibility(stopRecordAudioOption, false)
+        }
+
+        if(isPlaying) {
+            changeMenuOptionVisibility(playSoundOption, false)
+            changeMenuOptionVisibility(stopPlaySoundOption, true)
+        } else {
+            changeMenuOptionVisibility(playSoundOption, true)
+            changeMenuOptionVisibility(stopPlaySoundOption, false)
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun changeMenuOptionVisibility(option: MenuItem, status:Boolean) {
+        option.isEnabled = status
+        option.isVisible = status
+    }
+
 }
