@@ -25,26 +25,24 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnConvert.setOnClickListener {
             viewModel.convert(
-                binding.etFrom.text.toString(),
-                binding.spFromCurrency.selectedItem.toString(),
-                binding.spToCurrency.selectedItem.toString(),
+                binding.etFrom.text.toString()
             )
         }
 
         lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
                 when(event) {
-                    is MainViewModel.CurrencyEvent.Success -> {
+                    is MainViewModel.SoundEvent.Success -> {
                         binding.progressBar.isVisible = false
                         binding.tvResult.setTextColor(Color.BLACK)
                         binding.tvResult.text = event.resultText
                     }
-                    is MainViewModel.CurrencyEvent.Failure -> {
+                    is MainViewModel.SoundEvent.Failure -> {
                         binding.progressBar.isVisible = false
                         binding.tvResult.setTextColor(Color.RED)
                         binding.tvResult.text = event.errorText
                     }
-                    is MainViewModel.CurrencyEvent.Loading -> {
+                    is MainViewModel.SoundEvent.Loading -> {
                         binding.progressBar.isVisible = true
                     }
                     else -> Unit

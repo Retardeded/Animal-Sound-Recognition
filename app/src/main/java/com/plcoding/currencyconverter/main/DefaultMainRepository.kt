@@ -2,16 +2,14 @@ package com.plcoding.currencyconverter.main
 
 import com.plcoding.currencyconverter.data.CurrencyApi
 import com.plcoding.currencyconverter.data.models.CurrencyResponse
+import com.plcoding.currencyconverter.data.models.DataSound
 import com.plcoding.currencyconverter.util.Resource
 import javax.inject.Inject
 
-class DefaultMainRepository @Inject constructor(
-    private val api: CurrencyApi
-) : MainRepository {
-
-    override suspend fun getRates(base: String): Resource<CurrencyResponse> {
+class DefaultMainRepository @Inject constructor(val api:CurrencyApi) :MainRepository {
+    override suspend fun getSounds(): Resource<List<DataSound>> {
         return try {
-            val response = api.getRates(base)
+            val response = api.getSounds()
             val result = response.body()
             if(response.isSuccessful && result != null) {
                 Resource.Success(result)
@@ -22,4 +20,9 @@ class DefaultMainRepository @Inject constructor(
             Resource.Error(e.message ?: "An error occured")
         }
     }
+
+    //override suspend fun postSound(sound: DataSound): Resource<DataSound> {
+    //    TODO("Not yet implemented")
+    //}
+
 }
