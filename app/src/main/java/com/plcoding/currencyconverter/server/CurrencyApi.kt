@@ -1,0 +1,51 @@
+package com.plcoding.currencyconverter.server
+
+import com.plcoding.currencyconverter.data.models.PowerSpectrumCoefficient
+import com.plcoding.currencyconverter.data.models.SoundType
+import com.plcoding.currencyconverter.data.models.SoundsFreqCoefficients
+import com.plcoding.currencyconverter.data.models.SoundsTimeCoefficients
+import com.plcoding.currencyconverter.data.models.DataSound
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.*
+import retrofit2.http.GET
+
+
+
+
+interface CurrencyApi {
+
+    @GET("api/sounds/soundsInfo")
+    suspend fun getSounds(): Response<List<DataSound>>
+
+    @GET("api/sounds/soundTypes")
+    suspend fun getTypes(): Response<List<SoundType>>
+
+    @DELETE("api/sounds/{id}")
+    suspend fun deleteSound( @Path("id") id:String): Response<Any>
+
+    @GET("api/sounds/{id}")
+    suspend fun getSound( @Path("id") id:String): Response<DataSound>
+
+    //@GET("api/sounds/{Id}")
+    //fun getFilterList(
+    //    @Path("Id") Id: String,
+    //): Call<Response<DataSound>>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/sounds")
+    suspend fun postSound(@Body sound: DataSound): Response<DataSound>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/sounds/checkTime")
+    suspend fun checkSoundTimeDomain(@Body sound: DataSound): Response<List<Pair<SoundType, SoundsTimeCoefficients>>>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/sounds/checkPowerSpectrum")
+    suspend fun checkSoundPowerSpectrum(@Body sound: DataSound): Response<List<Pair<SoundType, PowerSpectrumCoefficient>>>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/sounds/checkFrequency")
+    suspend fun checkSoundFrequencyDomain(@Body sound: DataSound): Response<List<Pair<SoundType, SoundsFreqCoefficients>>>
+
+}

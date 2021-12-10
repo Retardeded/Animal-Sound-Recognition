@@ -1,6 +1,7 @@
-package com.example.animalsoundrecognition.model
+package com.plcoding.currencyconverter.data.models
 
 import com.jjoe64.graphview.series.DataPoint
+
 
 class DataGraph(dataPoints:List<DataPoint>) {
     val dataPoints: List<DataPoint> = dataPoints

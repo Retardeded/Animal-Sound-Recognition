@@ -1,4 +1,4 @@
-package com.example.animalsoundrecognition.model
+package com.plcoding.currencyconverter.data.models
 
 class PowerSpectrumCoefficient(val powerSpectrumCoefficient:Double, val mergedCoefficient:Double) {
     override fun toString(): String {

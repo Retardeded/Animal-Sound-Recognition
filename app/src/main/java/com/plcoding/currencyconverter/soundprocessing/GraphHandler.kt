@@ -2,8 +2,8 @@ package com.plcoding.currencyconverter.soundprocessing
 
 
 import android.media.AudioRecord
-import com.example.animalsoundrecognition.model.DataGraph
-import com.example.animalsoundrecognition.model.DataGraphs
+import com.plcoding.currencyconverter.data.models.DataGraph
+import com.plcoding.currencyconverter.data.models.DataGraphs
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.BaseSeries
 import com.jjoe64.graphview.series.DataPoint

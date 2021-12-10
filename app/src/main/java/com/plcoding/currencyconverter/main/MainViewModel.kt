@@ -3,12 +3,12 @@ package com.plcoding.currencyconverter.main
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plcoding.currencyconverter.data.models.DataSound
 import com.plcoding.currencyconverter.util.DispatcherProvider
 import com.plcoding.currencyconverter.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.round
 
 class MainViewModel @ViewModelInject constructor(
     val repository: MainRepository,
@@ -26,28 +26,115 @@ class MainViewModel @ViewModelInject constructor(
     private val _conversion = MutableStateFlow<SoundEvent>(SoundEvent.Empty)
     val conversion: StateFlow<SoundEvent> = _conversion
 
-    fun convert(
-        amountStr: String,
-    ) {
-        val fromAmount = amountStr
-        if(fromAmount == null) {
-            _conversion.value = SoundEvent.Failure("Not a valid amount")
-            return
-        }
-
+    fun getSounds() {
         viewModelScope.launch(dispatchers.io) {
             _conversion.value = SoundEvent.Loading
             when(val ratesResponse = repository.getSounds()) {
                 is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
                 is Resource.Success -> {
                     val list = ratesResponse.data!!
-                    if(list == null) {
-                        _conversion.value = SoundEvent.Failure("Unexpected error")
-                    } else {
-                        _conversion.value = SoundEvent.Success(
-                            "$list"
-                        )
-                    }
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun getTypes() {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.getTypes()) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun getSound(id: String) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.getSound(id)) {
+
+            }
+        }
+    }
+
+    fun postSound(sound:DataSound) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.postSound(sound)) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteSound(id: String) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.deleteSound(id)) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun checkSoundTimeDomain(sound: DataSound) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.checkSoundTimeDomain(sound)) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun checkSoundPowerSpectrum(sound: DataSound) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.checkSoundPowerSpectrum(sound)) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
+            }
+        }
+    }
+
+    fun checkSoundFrequencyDomain(sound: DataSound) {
+        viewModelScope.launch(dispatchers.io) {
+            _conversion.value = SoundEvent.Loading
+            when(val ratesResponse = repository.checkSoundFrequencyDomain(sound)) {
+                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
                 }
             }
         }

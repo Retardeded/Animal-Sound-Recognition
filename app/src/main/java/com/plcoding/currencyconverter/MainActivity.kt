@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.plcoding.currencyconverter.databinding.ActivityMainBinding
 import com.plcoding.currencyconverter.soundprocessing.GraphHandler
 import com.plcoding.currencyconverter.main.MainViewModel
+import com.plcoding.currencyconverter.server.SoundServiceHandler
 import com.plcoding.currencyconverter.soundprocessing.RecordHandler
 import com.plcoding.currencyconverter.soundprocessing.RecordHandler.Companion.isPlaying
 import com.plcoding.currencyconverter.soundprocessing.RecordHandler.Companion.isRecording
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var graphHandler: GraphHandler
     lateinit var recordHandler: RecordHandler
     private val viewModel: MainViewModel by viewModels()
+    lateinit var serviceHandler: SoundServiceHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         graphHandler = GraphHandler(binding.graphTime, binding.graphAplitude, binding.graphFreqFull)
         recordHandler = RecordHandler(graphHandler, "${externalCacheDir?.absolutePath}/audiometers.3gp")
+        serviceHandler = SoundServiceHandler()
+
 
         lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
@@ -71,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         GlobalScope.launch(Dispatchers.IO) {
-            when (item?.itemId) {
+            when (item.itemId) {
                 R.id.device_access_mic -> {
                     recordHandler.startRecording()
                     invalidateOptionsMenu()
@@ -89,9 +93,32 @@ class MainActivity : AppCompatActivity() {
                     invalidateOptionsMenu()
                 }
                 R.id.get_sounds -> {
-                    viewModel.convert(
-                        binding.textAnimalName.text.toString()
-                    )
+                    viewModel.getSounds()
+                }
+                R.id.get_sound_types-> {
+                    viewModel.getTypes()
+                }
+                R.id.get_sound -> {
+                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName)
+                }
+                R.id.upload_sound -> {
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    viewModel.postSound(sound)
+                }
+                R.id.delete_sound -> {
+                    viewModel.deleteSound(binding.textAnimalName.toString())
+                }
+                R.id.check_sound_time -> {
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    viewModel.checkSoundTimeDomain(sound)
+                }
+                R.id.check_sound_power -> {
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    viewModel.checkSoundPowerSpectrum(sound)
+                }
+                R.id.check_sound_freq -> {
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    viewModel.checkSoundFrequencyDomain(sound)
                 }
             }
             return@launch

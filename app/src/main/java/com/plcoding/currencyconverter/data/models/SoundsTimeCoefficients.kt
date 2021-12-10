@@ -1,4 +1,4 @@
-package com.example.animalsoundrecognition.model
+package com.plcoding.currencyconverter.data.models
 
 class SoundsTimeCoefficients(val envelopeCoefficient:Double, val energyCoefficient:Double,
                              val zeroCrossingCoefficient:Double, val mergedCoefficient:Double) {
