@@ -2,6 +2,8 @@ package com.plcoding.currencyconverter.server
 
 import android.widget.TextView
 import com.jjoe64.graphview.series.DataPoint
+import com.plcoding.currencyconverter.data.models.DataGraph
+import com.plcoding.currencyconverter.data.models.DataGraphs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,7 +29,7 @@ class SoundServiceHandler {
         service = retrofit.create(CurrencyApi::class.java)
     }
 
-    suspend fun getSound(textTest: TextView, animalNameText: TextView) {
+    suspend fun getSound(textTest: TextView, animalNameText: TextView, dataGraphs: DataGraphs) {
         val id = animalNameText.text.toString()
         val response = service.getSound(id)
         GlobalScope.launch(Dispatchers.Main) {
@@ -36,7 +38,7 @@ class SoundServiceHandler {
                 val soundData = response.body()!!
                 val stringBuilder = soundData.toString();
                 textTest.text = stringBuilder
-                //dataGraphs.currentRecordTimeDomain = loadDataSound(soundData.pointsInGraphs, soundData.timeDomainPoints, false)
+                dataGraphs.currentRecordTimeDomain = loadDataSound(soundData.pointsInGraphs, soundData.timeDomainPoints, false)
             }
             else {
                 val text = "MSG:" + response.message() + "CAUSE: " + response.errorBody()
@@ -47,7 +49,6 @@ class SoundServiceHandler {
 
     }
 
-    /*
     private fun loadDataSound(pointsInGraphs:Long,soundData:List<DataPoint>, isFreqDomain:Boolean): MutableList<DataGraph> {
         val dataGraphs: MutableList<DataGraph> = mutableListOf()
         var pointsInGraphs = pointsInGraphs
@@ -73,7 +74,6 @@ class SoundServiceHandler {
         return dataGraphs
     }
 
-     */
 
     suspend fun deleteSound(textTest: TextView, animalNameText: TextView) {
         val id = animalNameText.text.toString()

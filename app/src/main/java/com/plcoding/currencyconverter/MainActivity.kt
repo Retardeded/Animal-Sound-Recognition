@@ -99,14 +99,14 @@ class MainActivity : AppCompatActivity() {
                     viewModel.getTypes()
                 }
                 R.id.get_sound -> {
-                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName)
+                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
                 }
                 R.id.upload_sound -> {
                     val sound = recordHandler.createDataSound(true, binding.textAnimalName)
                     viewModel.postSound(sound)
                 }
                 R.id.delete_sound -> {
-                    viewModel.deleteSound(binding.textAnimalName.toString())
+                    serviceHandler.deleteSound(binding.tvResult, binding.textAnimalName)
                 }
                 R.id.check_sound_time -> {
                     val sound = recordHandler.createDataSound(true, binding.textAnimalName)
