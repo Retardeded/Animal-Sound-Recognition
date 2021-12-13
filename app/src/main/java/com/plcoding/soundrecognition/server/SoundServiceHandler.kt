@@ -39,6 +39,8 @@ class SoundServiceHandler {
                 val stringBuilder = soundData.toString();
                 textTest.text = stringBuilder
                 dataGraphs.currentRecordTimeDomain = loadDataSound(soundData.pointsInGraphs, soundData.timeDomainPoints, false)
+                dataGraphs.numOfGraphs = soundData.numOfGraphs
+                dataGraphs.pointsInGraphs = soundData.pointsInGraphs
             }
             else {
                 val text = "MSG:" + response.message() + "CAUSE: " + response.errorBody()

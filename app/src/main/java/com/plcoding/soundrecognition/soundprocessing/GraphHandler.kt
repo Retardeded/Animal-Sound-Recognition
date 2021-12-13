@@ -25,8 +25,6 @@ class GraphHandler @ViewModelInject constructor(): ViewModel() {
     var mFullFreqSeries: BaseSeries<DataPoint>? = null
     var mAmplitudeSeries: BaseSeries<DataPoint>? = null
     var mTimeSeries: BaseSeries<DataPoint>? = null
-    var pointsInGraphs: Long = 0
-    var numOfGraphs: Long = 0
     var transformer: RealDoubleFFT? = null
 
     fun initGraphView(graphTime: GraphView, graphAmplitude: GraphView, graphFreqFull: GraphView) {
@@ -112,33 +110,31 @@ class GraphHandler @ViewModelInject constructor(): ViewModel() {
         }
 
         visualizePowerSpectrum(dataAmplitudeFullSignal, index)
-        pointsInGraphs = audioData.size.toLong()
-        numOfGraphs = index.toLong()
-
-
+        dataGraphs.pointsInGraphs = audioData.size.toLong()
+        dataGraphs.numOfGraphs = index.toLong()
     }
 
     fun replayGraphView(mAudioRecord:AudioRecord): Boolean {
         var index = 0
         val audioData = ShortArray(mMinBufferSize)
-        val num = audioData.size
-        val dataAmplitudeFullSignal = DoubleArray(num/2)
+        val numOfGraphs = dataGraphs.numOfGraphs.toInt()
+        val num = dataGraphs.pointsInGraphs.toInt()
+        val dataAmplitudeFullSignal = DoubleArray((num/2).toInt())
 
-        while (isPlaying && index < dataGraphs.currentRecordTimeDomain.size) {
+        while (isPlaying && index < numOfGraphs) {
             val read = mAudioRecord!!.read(audioData, 0, mMinBufferSize)
-            val numTime =  dataGraphs.currentRecordTimeDomain[index].dataPoints.size
-            val dataTime = arrayOfNulls<DataPoint>(numTime)
-            val dataAmplitude = arrayOfNulls<DataPoint>(numTime/2)
-            for (i in 0 until numTime) {
+            val dataTime = arrayOfNulls<DataPoint>(num)
+            val dataAmplitude = arrayOfNulls<DataPoint>(num/2)
+            for (i in 0 until num) {
                 dataTime[i] = dataGraphs.currentRecordTimeDomain[index].dataPoints[i]
             }
-            transformer = RealDoubleFFT(numTime)
-            val toTransform = DoubleArray(numTime)
-            for (i in 0 until numTime) {
-                toTransform[i] = dataTime[i]!!.y / numTime
+            transformer = RealDoubleFFT(num)
+            val toTransform = DoubleArray(num)
+            for (i in 0 until num) {
+                toTransform[i] = dataTime[i]!!.y / num
             }
             transformer!!.ft(toTransform)
-            for (i in 0 until numTime/2) {
+            for (i in 0 until num/2) {
                 //output_power[i] = (real_output[i] * real_output[i] + imaginary_output[i] * imaginary_output[i]) / real_output.length;
                 dataAmplitude[i] = DataPoint(i.toDouble(), toTransform[i*2+1] * toTransform[i*2+1] + toTransform[i*2] * toTransform[i*2])
                 dataAmplitudeFullSignal[i] += dataAmplitude[i]!!.y

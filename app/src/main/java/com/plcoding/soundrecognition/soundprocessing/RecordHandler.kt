@@ -132,7 +132,7 @@ class RecordHandler @ViewModelInject constructor(
             }
         }
 
-        val sound = DataSound(animalNameText.text.toString(), animalNameText.text.toString(), currentDuration, graphHandler.pointsInGraphs, graphHandler.numOfGraphs, timePoints)
+        val sound = DataSound(animalNameText.text.toString(), animalNameText.text.toString(), currentDuration, graphHandler.dataGraphs.pointsInGraphs, graphHandler.dataGraphs.numOfGraphs, timePoints)
         return sound
     }
 

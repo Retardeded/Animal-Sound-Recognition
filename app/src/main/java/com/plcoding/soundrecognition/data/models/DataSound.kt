@@ -4,7 +4,7 @@ import com.jjoe64.graphview.series.DataPoint
 
 
 class DataSound(private val title: String, private val type:String, private val durationMillis: Long,
-                val pointsInGraphs: Long, private val numOfGraphs: Long, val timeDomainPoints:List<DataPoint>) {
+                val pointsInGraphs: Long, val numOfGraphs: Long, val timeDomainPoints:List<DataPoint>) {
     private val id: Int? = null
     val dataSoundParameters: DataSoundParameters? = null
 
