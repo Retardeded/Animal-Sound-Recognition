@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SoundServiceHandler {
-    lateinit var service: CurrencyApi
+    lateinit var service: SoundService
     //var okHttpClient: OkHttpClient? = null
     // tutaj ustaw swoje lokalne ip
     val ipString = "http://192.168.1.3:8080"
@@ -26,7 +26,7 @@ class SoundServiceHandler {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        service = retrofit.create(CurrencyApi::class.java)
+        service = retrofit.create(SoundService::class.java)
     }
 
     suspend fun getSound(textTest: TextView, animalNameText: TextView, dataGraphs: DataGraphs) {

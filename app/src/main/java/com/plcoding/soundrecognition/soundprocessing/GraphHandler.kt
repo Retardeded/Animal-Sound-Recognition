@@ -1,4 +1,4 @@
-package com.plcoding.soundrecognition.viewmodels
+package com.plcoding.soundrecognition.soundprocessing
 
 
 import android.media.AudioRecord
@@ -19,7 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class GraphViewModel @ViewModelInject constructor(): ViewModel() {
+class GraphHandler @ViewModelInject constructor(): ViewModel() {
 
     var dataGraphs: DataGraphs = DataGraphs()
     var mFullFreqSeries: BaseSeries<DataPoint>? = null

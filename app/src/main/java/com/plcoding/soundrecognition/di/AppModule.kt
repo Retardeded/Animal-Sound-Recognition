@@ -1,10 +1,10 @@
 package com.plcoding.soundrecognition.di
 
-import com.plcoding.soundrecognition.server.CurrencyApi
+import com.plcoding.soundrecognition.server.SoundService
 import com.plcoding.soundrecognition.viewmodels.DefaultMainRepository
 import com.plcoding.soundrecognition.viewmodels.MainRepository
 import com.plcoding.soundrecognition.util.DispatcherProvider
-import com.plcoding.soundrecognition.viewmodels.GraphViewModel
+import com.plcoding.soundrecognition.soundprocessing.GraphHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,19 +23,19 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCurrencyApi(): CurrencyApi = Retrofit.Builder()
+    fun provideCurrencyApi(): SoundService = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-        .create(CurrencyApi::class.java)
+        .create(SoundService::class.java)
 
     @Singleton
     @Provides
-    fun provideMainRepository(api: CurrencyApi): MainRepository = DefaultMainRepository(api)
+    fun provideMainRepository(api: SoundService): MainRepository = DefaultMainRepository(api)
 
     @Singleton
     @Provides
-    fun provideGraphViewModel(): GraphViewModel = GraphViewModel()
+    fun provideGraphViewModel(): GraphHandler = GraphHandler()
 
     @Singleton
     @Provides

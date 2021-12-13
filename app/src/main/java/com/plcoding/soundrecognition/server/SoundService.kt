@@ -12,7 +12,7 @@ import retrofit2.http.GET
 
 
 
-interface CurrencyApi {
+interface SoundService {
 
     @GET("api/sounds/soundsInfo")
     suspend fun getSounds(): Response<List<DataSound>>

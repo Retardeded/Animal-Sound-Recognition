@@ -4,12 +4,12 @@ import com.plcoding.soundrecognition.data.models.PowerSpectrumCoefficient
 import com.plcoding.soundrecognition.data.models.SoundType
 import com.plcoding.soundrecognition.data.models.SoundsFreqCoefficients
 import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
-import com.plcoding.soundrecognition.server.CurrencyApi
+import com.plcoding.soundrecognition.server.SoundService
 import com.plcoding.soundrecognition.data.models.DataSound
 import com.plcoding.soundrecognition.util.Resource
 import javax.inject.Inject
 
-class DefaultMainRepository @Inject constructor(val api: CurrencyApi) :MainRepository {
+class DefaultMainRepository @Inject constructor(val api: SoundService) :MainRepository {
     override suspend fun getSounds(): Resource<List<DataSound>> {
         return try {
             val response = api.getSounds()

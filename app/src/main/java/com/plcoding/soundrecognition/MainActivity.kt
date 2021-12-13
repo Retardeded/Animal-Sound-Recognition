@@ -1,15 +1,21 @@
 package com.plcoding.soundrecognition
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.plcoding.soundrecognition.databinding.ActivityMainBinding
-import com.plcoding.soundrecognition.viewmodels.GraphViewModel
+import com.plcoding.soundrecognition.soundprocessing.GraphHandler
 import com.plcoding.soundrecognition.viewmodels.MainViewModel
 import com.plcoding.soundrecognition.server.SoundServiceHandler
 import com.plcoding.soundrecognition.soundprocessing.RecordHandler
@@ -20,17 +26,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import android.widget.Toast
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val graphViewModel: GraphViewModel by viewModels()
+    private val graphHandler: GraphHandler by viewModels()
     lateinit var recordHandler: RecordHandler
     private val viewModel: MainViewModel by viewModels()
     lateinit var serviceHandler: SoundServiceHandler
     lateinit var fileName:String
+    private val MY_PERMISSIONS_RECORD_AUDIO = 1
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -38,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         fileName = "${externalCacheDir?.absolutePath}/currentSound.3gp"
         serviceHandler = SoundServiceHandler()
-        recordHandler = RecordHandler(graphViewModel)
+        recordHandler = RecordHandler(graphHandler)
 
         lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
@@ -60,11 +69,53 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        requestAudioPermissions()
+    }
+
+    private fun requestAudioPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            //When permission is not granted by user, show them message why this permission is needed.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                )
+            ) {
+                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG)
+                    .show()
+
+                //Give user option to still opt-in the permissions
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.RECORD_AUDIO),
+                    MY_PERMISSIONS_RECORD_AUDIO
+                )
+            } else {
+                // Show user dialog to grant permission to record audio
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.RECORD_AUDIO),
+                    MY_PERMISSIONS_RECORD_AUDIO
+                )
+            }
+        } else if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+
+            //
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        graphViewModel.initGraphView(binding.graphTime, binding.graphAplitude, binding.graphFreqFull)
+        graphHandler.initGraphView(binding.graphTime, binding.graphAplitude, binding.graphFreqFull)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -99,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.getTypes()
                 }
                 R.id.get_sound -> {
-                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphViewModel.dataGraphs)
+                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
                 }
                 R.id.upload_sound -> {
                     val sound = recordHandler.createDataSound(true, binding.textAnimalName)

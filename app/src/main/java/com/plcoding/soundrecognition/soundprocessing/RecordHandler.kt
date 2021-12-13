@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModel
 
 import com.jjoe64.graphview.series.DataPoint
 import com.plcoding.soundrecognition.data.models.DataSound
-import com.plcoding.soundrecognition.viewmodels.GraphViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,7 +21,7 @@ const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
 const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
 
 class RecordHandler @ViewModelInject constructor(
-    val graphViewModel: GraphViewModel
+    val graphHandler: GraphHandler
 ): ViewModel() {
 
     private var mAudioRecord: AudioRecord? = null
@@ -34,9 +33,9 @@ class RecordHandler @ViewModelInject constructor(
 
 
     fun startPlaying(textTest: TextView, animalNameText: TextView, fileName:String) {
-        graphViewModel.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
-        graphViewModel.mTimeSeries?.resetData(arrayOf<DataPoint>())
-        graphViewModel.mFullFreqSeries?.resetData(arrayOf<DataPoint>())
+        graphHandler.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
+        graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
+        graphHandler.mFullFreqSeries?.resetData(arrayOf<DataPoint>())
 
         val sound = createDataSound(true, animalNameText)
         val stringBuilder = sound.toString()
@@ -57,7 +56,7 @@ class RecordHandler @ViewModelInject constructor(
         mAudioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, mMinBufferSize)
         mAudioRecord!!.startRecording()
 
-        val playedOut = graphViewModel.replayGraphView(mAudioRecord!!)
+        val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
         if(playedOut) {
             stopPlaying()
         }
@@ -76,7 +75,7 @@ class RecordHandler @ViewModelInject constructor(
     }
 
     fun startRecording(fileName:String) {
-        graphViewModel.dataGraphs.currentRecordTimeDomain.clear()
+        graphHandler.dataGraphs.currentRecordTimeDomain.clear()
         mAudioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT,
             mMinBufferSize
         )
@@ -98,7 +97,7 @@ class RecordHandler @ViewModelInject constructor(
             start()
         }
 
-        mRecordThread = Thread(Runnable { graphViewModel.updateGraphView(mAudioRecord!!) })
+        mRecordThread = Thread(Runnable { graphHandler.updateGraphView(mAudioRecord!!) })
         mRecordThread!!.start()
         soundStartingTime = System.currentTimeMillis()
     }
@@ -114,8 +113,8 @@ class RecordHandler @ViewModelInject constructor(
             }
             mAudioRecord?.release()
             mAudioRecord = null
-            graphViewModel.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
-            graphViewModel.mTimeSeries?.resetData(arrayOf<DataPoint>())
+            graphHandler.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
+            graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
         }
 
         recorder?.apply {
@@ -128,12 +127,12 @@ class RecordHandler @ViewModelInject constructor(
     fun createDataSound(includeGraph:Boolean, animalNameText: TextView): DataSound {
         val timePoints: MutableList<DataPoint> = mutableListOf()
         if(includeGraph) {
-            for (graphs in graphViewModel.dataGraphs.currentRecordTimeDomain) {
+            for (graphs in graphHandler.dataGraphs.currentRecordTimeDomain) {
                 timePoints.addAll(graphs.dataPoints)
             }
         }
 
-        val sound = DataSound(animalNameText.text.toString(), animalNameText.text.toString(), currentDuration, graphViewModel.pointsInGraphs, graphViewModel.numOfGraphs, timePoints)
+        val sound = DataSound(animalNameText.text.toString(), animalNameText.text.toString(), currentDuration, graphHandler.pointsInGraphs, graphHandler.numOfGraphs, timePoints)
         return sound
     }
 
