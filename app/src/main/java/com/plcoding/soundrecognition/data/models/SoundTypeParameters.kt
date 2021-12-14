@@ -8,10 +8,9 @@ class SoundTypeParameters(val typeName:String, val parametersListInt:List<SoundT
     }
 
     override fun toString(): String {
-        return "SoundTypeParameters(typeName='$typeName'," +
-                " parametersListInt=$parametersListInt," +
-                " parametersListDouble=$parametersListDouble," +
-                " zeroCrossingDensity=$zeroCrossingDensity)"
+        return  "$parametersListInt\n" +
+                "$parametersListDouble\n" +
+                "zeroCrossingDensity=$zeroCrossingDensity\n"
     }
 
 

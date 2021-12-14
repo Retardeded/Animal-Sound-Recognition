@@ -4,6 +4,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plcoding.soundrecognition.data.models.DataSound
+import com.plcoding.soundrecognition.data.models.SoundType
+import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
 import com.plcoding.soundrecognition.util.DispatcherProvider
 import com.plcoding.soundrecognition.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,6 +97,21 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+    fun formatList(list:List<Pair<SoundType, Any>>):String {
+        var text = "Most Similar Sound Types:\n"
+        var index = 1
+
+        list.forEach {
+            val type = it.first
+            val coefficient = it.second
+
+            text += "$index - ${type.name}\n$coefficient"
+            index++
+        }
+
+        return text
+    }
+
     fun checkSoundTimeDomain(sound: DataSound) {
         viewModelScope.launch(dispatchers.io) {
             _conversion.value = SoundEvent.Loading
@@ -103,7 +120,7 @@ class MainViewModel @ViewModelInject constructor(
                 is Resource.Success -> {
                     val list = ratesResponse.data!!
                     _conversion.value = SoundEvent.Success(
-                        "$list"
+                        formatList(list)
                     )
                 }
             }
@@ -118,7 +135,7 @@ class MainViewModel @ViewModelInject constructor(
                 is Resource.Success -> {
                     val list = ratesResponse.data!!
                     _conversion.value = SoundEvent.Success(
-                        "$list"
+                        formatList(list)
                     )
                 }
             }
@@ -133,7 +150,7 @@ class MainViewModel @ViewModelInject constructor(
                 is Resource.Success -> {
                     val list = ratesResponse.data!!
                     _conversion.value = SoundEvent.Success(
-                        "$list"
+                        formatList(list)
                     )
                 }
             }

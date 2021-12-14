@@ -9,8 +9,12 @@ class DataSound(private val title: String, private val type:String, private val 
     val dataSoundParameters: DataSoundParameters? = null
 
     override fun toString(): String {
-        return "Sound(id=$id, title=$title, type=$type, durationMilis=$durationMillis, pointsInGraphs=$pointsInGraphs, numsOfGraphs=$numOfGraphs" +
-                ", parameteres=$dataSoundParameters" +
-                ", timePoints=${timeDomainPoints.takeLast(10)})"
+        return "Sound:\n" +
+                "id:$id\n" +
+                "title:$title, " + "type:$type\n" +
+                "durationInMillis:$durationMillis\n" +
+                "pointsInGraphs:$pointsInGraphs, numsOfGraphs:$numOfGraphs\n" +
+                "$dataSoundParameters\n"+
+                "timePoints:${timeDomainPoints.takeLast(1)})\n"
     }
 }
