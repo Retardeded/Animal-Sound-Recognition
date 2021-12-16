@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     invalidateOptionsMenu()
                 }
                 R.id.device_access_audio_play -> {
-                    recordHandler.startPlaying(binding.tvResult, binding.textAnimalName, fileName)
+                    recordHandler.startPlaying(binding.tvResult, binding.textAnimalName, binding.textAnimalType, fileName)
                     invalidateOptionsMenu()
                 }
                 R.id.device_access_audio_stop -> {
@@ -153,22 +153,22 @@ class MainActivity : AppCompatActivity() {
                     serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
                 }
                 R.id.upload_sound -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.postSound(sound)
                 }
                 R.id.delete_sound -> {
                     serviceHandler.deleteSound(binding.tvResult, binding.textAnimalName)
                 }
                 R.id.check_sound_time -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundTimeDomain(sound)
                 }
                 R.id.check_sound_power -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundPowerSpectrum(sound)
                 }
                 R.id.check_sound_freq -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName)
+                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundFrequencyDomain(sound)
                 }
             }

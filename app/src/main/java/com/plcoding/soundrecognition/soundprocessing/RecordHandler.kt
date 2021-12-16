@@ -32,12 +32,12 @@ class RecordHandler @ViewModelInject constructor(
     var currentDuration:Long = 0
 
 
-    fun startPlaying(textTest: TextView, animalNameText: TextView, fileName:String) {
+    fun startPlaying(textTest: TextView, animalNameText: TextView, animalTypeText: TextView, fileName:String) {
         graphHandler.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
         graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
         graphHandler.mFullFreqSeries?.resetData(arrayOf<DataPoint>())
 
-        val sound = createDataSound(true, animalNameText)
+        val sound = createDataSound(true, animalNameText, animalTypeText)
         val stringBuilder = sound.toString()
         GlobalScope.launch( Dispatchers.Main ){
             textTest.text = stringBuilder
@@ -124,7 +124,7 @@ class RecordHandler @ViewModelInject constructor(
         recorder = null
     }
 
-    fun createDataSound(includeGraph:Boolean, animalNameText: TextView): DataSound {
+    fun createDataSound(includeGraph:Boolean, animalNameText: TextView, animalTypeText:TextView): DataSound {
         val timePoints: MutableList<DataPoint> = mutableListOf()
         if(includeGraph) {
             for (graphs in graphHandler.dataGraphs.currentRecordTimeDomain) {
@@ -132,7 +132,7 @@ class RecordHandler @ViewModelInject constructor(
             }
         }
 
-        val sound = DataSound(animalNameText.text.toString(), animalNameText.text.toString(), currentDuration, graphHandler.dataGraphs.pointsInGraphs, graphHandler.dataGraphs.numOfGraphs, timePoints)
+        val sound = DataSound(animalNameText.text.toString(), animalTypeText.text.toString(), currentDuration, graphHandler.dataGraphs.pointsInGraphs, graphHandler.dataGraphs.numOfGraphs, timePoints)
         return sound
     }
 

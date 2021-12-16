@@ -71,7 +71,18 @@ class MainViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatchers.io) {
             _conversion.value = SoundEvent.Loading
             when(val ratesResponse = repository.postSound(sound)) {
-                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Error -> {
+                    val status = ratesResponse.message
+                    println("Messsage $status")
+                    println("BODY ${ratesResponse.data}")
+                    if(ratesResponse.message == "") {
+                        _conversion.value = SoundEvent.Failure(
+                            "Sound already exists"
+                        )
+                    } else {
+                        _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                    }
+                }
                 is Resource.Success -> {
                     val list = ratesResponse.data!!
                     _conversion.value = SoundEvent.Success(
