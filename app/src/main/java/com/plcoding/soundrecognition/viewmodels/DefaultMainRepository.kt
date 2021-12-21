@@ -7,6 +7,10 @@ import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
 import com.plcoding.soundrecognition.server.SoundService
 import com.plcoding.soundrecognition.data.models.DataSound
 import com.plcoding.soundrecognition.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class DefaultMainRepository @Inject constructor(val api: SoundService) :MainRepository {
@@ -38,14 +42,67 @@ class DefaultMainRepository @Inject constructor(val api: SoundService) :MainRepo
         }
     }
 
-    override suspend fun getSound(id: String): DataSound {
+    override suspend fun getSound(id: String): Flow<Resource<DataSound>> = flow {
+        //emit(Resource.Loading())
+
+        //val wordInfos = dao.getWordInfos(word).map { it.toWordInfo() }
+        var dumData = DataSound("", "", 0, 0, arrayListOf())
+
+        try {
+            val remoteWordInfos = api.getSound(id)
+            dumData = remoteWordInfos.body()!!
+            println(":::::::::::::$dumData")
+            println(":::::::::::::$dumData")
+            println(":::::::::::::$dumData")
+        } catch(e: HttpException) {
+            emit(Resource.Error(
+                message = "Oops, something went wrong!",
+                data = dumData
+            ))
+        } catch(e: IOException) {
+            emit(Resource.Error(
+                message = "Couldn't reach server, check your internet connection.",
+                data = dumData
+            ))
+        }
+
+        //val newWordInfos = dao.getWordInfos(word).map { it.toWordInfo() }
+        emit(Resource.Success(dumData))
+    }
+
+
+    /*
+    override suspend fun getSound(id: String): Flow<Resource<DataSound>> {
+
+        /*
         val response = api.getSound(id)
         val sound = response.body()!!
         println(":::::::::::::$sound")
         println(":::::::::::::$sound")
         println(":::::::::::::$sound")
        return sound
+
+         */
+
+        return try {
+            val response = api.getSound(id)
+            val result = response.body()
+
+            println(":::::::::::::$result")
+            println(":::::::::::::$result")
+            println(":::::::::::::$result")
+            if(response.isSuccessful && result != null) {
+                Resource.Success(result)
+            } else {
+                Resource.Error(response.message())
+            }
+        } catch(e: Exception) {
+            Resource.Error(e.message ?: "An error occured")
+        }
+
     }
+
+     */
 
     override suspend fun postSound(sound: DataSound): Resource<DataSound> {
         return try {

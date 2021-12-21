@@ -37,7 +37,7 @@ class RecordHandler @ViewModelInject constructor(
         graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
         graphHandler.mFullFreqSeries?.resetData(arrayOf<DataPoint>())
 
-        val sound = createDataSound(true, animalNameText, animalTypeText)
+        val sound = graphHandler.createDataSound(true, animalNameText, animalTypeText)
         val stringBuilder = sound.toString()
         GlobalScope.launch( Dispatchers.Main ){
             textTest.text = stringBuilder
@@ -109,6 +109,7 @@ class RecordHandler @ViewModelInject constructor(
                 mAudioRecord?.stop()
                 isRecording = false
                 Thread.sleep(100)
+                // tutaj cos zmienic z tym sleep?
                 mRecordThread = null
             }
             mAudioRecord?.release()
@@ -124,17 +125,6 @@ class RecordHandler @ViewModelInject constructor(
         recorder = null
     }
 
-    fun createDataSound(includeGraph:Boolean, animalNameText: TextView, animalTypeText:TextView): DataSound {
-        val timePoints: MutableList<DataPoint> = mutableListOf()
-        if(includeGraph) {
-            for (graphs in graphHandler.dataGraphs.currentRecordTimeDomain) {
-                timePoints.addAll(graphs.dataPoints)
-            }
-        }
-
-        val sound = DataSound(animalNameText.text.toString(), animalTypeText.text.toString(), currentDuration, graphHandler.dataGraphs.pointsInGraphs, graphHandler.dataGraphs.numOfGraphs, timePoints)
-        return sound
-    }
 
     companion object {
         val mMinBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)

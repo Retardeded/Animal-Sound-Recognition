@@ -1,11 +1,14 @@
 package com.plcoding.soundrecognition.viewmodels
 
+import android.widget.TextView
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plcoding.soundrecognition.data.models.DataGraphs
 import com.plcoding.soundrecognition.data.models.DataSound
 import com.plcoding.soundrecognition.data.models.SoundType
 import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
+import com.plcoding.soundrecognition.server.SoundServiceHandler
 import com.plcoding.soundrecognition.util.DispatcherProvider
 import com.plcoding.soundrecognition.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel @ViewModelInject constructor(
     val repository: MainRepository,
+    val soundServiceHandler: SoundServiceHandler,
     val dispatchers: DispatcherProvider
 ): ViewModel() {
 
@@ -58,14 +62,21 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    fun getSound(id: String) {
+    fun getSound(textTest: TextView, animalNameText: TextView, dataGraphs: DataGraphs) {
         viewModelScope.launch(dispatchers.io) {
             _conversion.value = SoundEvent.Loading
-            when(val ratesResponse = repository.getSound(id)) {
-
+            when(val ratesResponse = soundServiceHandler.getSound(textTest, animalNameText, dataGraphs)) {
+                is Resource.Error<*> -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Success<*> -> {
+                    val list = ratesResponse.data!!
+                    _conversion.value = SoundEvent.Success(
+                        "$list"
+                    )
+                }
             }
         }
     }
+
 
     fun postSound(sound:DataSound) {
         viewModelScope.launch(dispatchers.io) {

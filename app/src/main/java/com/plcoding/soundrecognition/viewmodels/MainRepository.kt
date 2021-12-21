@@ -7,6 +7,7 @@ import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
 import com.plcoding.soundrecognition.data.models.DataSound
 import com.plcoding.soundrecognition.util.Resource
 import retrofit2.http.*
+import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
 
@@ -14,11 +15,11 @@ interface MainRepository {
 
     suspend fun getTypes(): Resource<List<SoundType>>
 
-    suspend fun getSound(@Path("id") id:String): DataSound
+    suspend fun getSound(id:String): Flow<Resource<DataSound>>
 
     suspend fun postSound(@Body sound: DataSound): Resource<DataSound>
 
-    suspend fun deleteSound(@Path("id") id:String): Resource<Any>
+    suspend fun deleteSound(id:String): Resource<Any>
 
     suspend fun checkSoundTimeDomain(@Body sound: DataSound): Resource<List<Pair<SoundType, SoundsTimeCoefficients>>>
 

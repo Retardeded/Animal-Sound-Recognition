@@ -2,6 +2,7 @@ package com.plcoding.soundrecognition.soundprocessing
 
 
 import android.media.AudioRecord
+import android.widget.TextView
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.plcoding.soundrecognition.data.models.DataGraph
@@ -10,6 +11,7 @@ import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.BaseSeries
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import com.plcoding.soundrecognition.data.models.DataSound
 import com.plcoding.soundrecognition.fftpack.RealDoubleFFT
 import com.plcoding.soundrecognition.soundprocessing.RecordHandler.Companion.isPlaying
 import com.plcoding.soundrecognition.soundprocessing.RecordHandler.Companion.isRecording
@@ -160,6 +162,18 @@ class GraphHandler @ViewModelInject constructor(): ViewModel() {
         GlobalScope.launch(Dispatchers.Main) {
             mFullFreqSeries!!.resetData(data)
         }
+    }
+
+    fun createDataSound(includeGraph:Boolean, animalNameText: TextView, animalTypeText: TextView): DataSound {
+        val timePoints: MutableList<DataPoint> = mutableListOf()
+        if(includeGraph) {
+            for (graphs in dataGraphs.currentRecordTimeDomain) {
+                timePoints.addAll(graphs.dataPoints)
+            }
+        }
+
+        val sound = DataSound(animalNameText.text.toString(), animalTypeText.text.toString(), dataGraphs.pointsInGraphs, dataGraphs.numOfGraphs, timePoints)
+        return sound
     }
 
 

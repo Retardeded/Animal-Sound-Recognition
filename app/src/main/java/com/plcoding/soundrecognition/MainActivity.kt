@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private val graphHandler: GraphHandler by viewModels()
     lateinit var recordHandler: RecordHandler
     private val viewModel: MainViewModel by viewModels()
-    lateinit var serviceHandler: SoundServiceHandler
+    //var serviceHandler: SoundServiceHandler by viewModels()
     lateinit var fileName:String
     private val MY_PERMISSIONS_RECORD_AUDIO = 1
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fileName = "${externalCacheDir?.absolutePath}/currentSound.3gp"
-        serviceHandler = SoundServiceHandler()
+        //serviceHandler = SoundServiceHandler()
         recordHandler = RecordHandler(graphHandler)
 
         lifecycleScope.launchWhenStarted {
@@ -150,25 +150,26 @@ class MainActivity : AppCompatActivity() {
                     viewModel.getTypes()
                 }
                 R.id.get_sound -> {
-                    serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
+                    viewModel.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
+                    //serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
                 }
                 R.id.upload_sound -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
+                    val sound = graphHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.postSound(sound)
                 }
                 R.id.delete_sound -> {
-                    serviceHandler.deleteSound(binding.tvResult, binding.textAnimalName)
+                    //serviceHandler.deleteSound(binding.tvResult, binding.textAnimalName)
                 }
                 R.id.check_sound_time -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
+                    val sound = graphHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundTimeDomain(sound)
                 }
                 R.id.check_sound_power -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
+                    val sound = graphHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundPowerSpectrum(sound)
                 }
                 R.id.check_sound_freq -> {
-                    val sound = recordHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
+                    val sound = graphHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
                     viewModel.checkSoundFrequencyDomain(sound)
                 }
             }

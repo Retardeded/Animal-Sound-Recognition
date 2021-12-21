@@ -1,6 +1,7 @@
 package com.plcoding.soundrecognition.di
 
 import com.plcoding.soundrecognition.server.SoundService
+import com.plcoding.soundrecognition.server.SoundServiceHandler
 import com.plcoding.soundrecognition.viewmodels.DefaultMainRepository
 import com.plcoding.soundrecognition.viewmodels.MainRepository
 import com.plcoding.soundrecognition.util.DispatcherProvider
@@ -35,7 +36,13 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideSoundServiceHandler(api: SoundService): SoundServiceHandler = SoundServiceHandler(api)
+
+    @Singleton
+    @Provides
     fun provideGraphViewModel(): GraphHandler = GraphHandler()
+
+    // tutaj dodac provide RecordHandler
 
     @Singleton
     @Provides

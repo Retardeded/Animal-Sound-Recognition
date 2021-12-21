@@ -4,19 +4,24 @@ import android.widget.TextView
 import com.jjoe64.graphview.series.DataPoint
 import com.plcoding.soundrecognition.data.models.DataGraph
 import com.plcoding.soundrecognition.data.models.DataGraphs
+import com.plcoding.soundrecognition.data.models.DataSound
+import com.plcoding.soundrecognition.data.models.SoundType
+import com.plcoding.soundrecognition.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class SoundServiceHandler {
-    lateinit var service: SoundService
+class SoundServiceHandler @Inject constructor(private val service: SoundService) {
+    //lateinit var service: SoundService
     //var okHttpClient: OkHttpClient? = null
     // tutaj ustaw swoje lokalne ip
-    val ipString = "http://192.168.1.3:8080"
+    //val ipString = "http://192.168.1.3:8080"
     //.baseUrl("http://10.0.0.5:8080/")
     //.baseUrl("http://192.168.1.3:8080/")
+    /*
     init {
         createClient()
     }
@@ -29,7 +34,11 @@ class SoundServiceHandler {
         service = retrofit.create(SoundService::class.java)
     }
 
-    suspend fun getSound(textTest: TextView, animalNameText: TextView, dataGraphs: DataGraphs) {
+     */
+
+
+
+    suspend fun getSound(textTest: TextView, animalNameText: TextView, dataGraphs: DataGraphs): Resource<DataSound> {
         val id = animalNameText.text.toString()
         val response = service.getSound(id)
         GlobalScope.launch(Dispatchers.Main) {
@@ -47,6 +56,18 @@ class SoundServiceHandler {
                 textTest.text = text
             }
 
+        }
+
+        return try {
+            val response = service.getSound(id)
+            val result = response.body()
+            if(response.isSuccessful && result != null) {
+                Resource.Success(result)
+            } else {
+                Resource.Error(response.message())
+            }
+        } catch(e: Exception) {
+            Resource.Error(e.message ?: "An error occured")
         }
 
     }
