@@ -2,8 +2,6 @@ package com.plcoding.soundrecognition.di
 
 import com.plcoding.soundrecognition.server.SoundService
 import com.plcoding.soundrecognition.server.SoundServiceHandler
-import com.plcoding.soundrecognition.viewmodels.DefaultMainRepository
-import com.plcoding.soundrecognition.viewmodels.MainRepository
 import com.plcoding.soundrecognition.util.DispatcherProvider
 import com.plcoding.soundrecognition.soundprocessing.GraphHandler
 import dagger.Module
@@ -29,10 +27,6 @@ object AppModule {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(SoundService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideMainRepository(api: SoundService): MainRepository = DefaultMainRepository(api)
 
     @Singleton
     @Provides

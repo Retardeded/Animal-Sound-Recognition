@@ -26,11 +26,6 @@ interface SoundService {
     @GET("api/sounds/{id}")
     suspend fun getSound( @Path("id") id:String): Response<DataSound>
 
-    //@GET("api/sounds/{Id}")
-    //fun getFilterList(
-    //    @Path("Id") Id: String,
-    //): Call<Response<DataSound>>
-
     @Headers("Content-Type: application/json")
     @POST("api/sounds")
     suspend fun postSound(@Body sound: DataSound): Response<DataSound>

@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private val graphHandler: GraphHandler by viewModels()
     lateinit var recordHandler: RecordHandler
     private val viewModel: MainViewModel by viewModels()
-    //var serviceHandler: SoundServiceHandler by viewModels()
     lateinit var fileName:String
     private val MY_PERMISSIONS_RECORD_AUDIO = 1
 
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fileName = "${externalCacheDir?.absolutePath}/currentSound.3gp"
-        //serviceHandler = SoundServiceHandler()
         recordHandler = RecordHandler(graphHandler)
 
         lifecycleScope.launchWhenStarted {
@@ -150,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.getTypes()
                 }
                 R.id.get_sound -> {
-                    viewModel.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
+                    viewModel.getSound(binding.textAnimalName.text.toString(), graphHandler.dataGraphs)
                     //serviceHandler.getSound(binding.tvResult, binding.textAnimalName, graphHandler.dataGraphs)
                 }
                 R.id.upload_sound -> {
@@ -159,6 +157,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.delete_sound -> {
                     //serviceHandler.deleteSound(binding.tvResult, binding.textAnimalName)
+                    viewModel.deleteSound(binding.textAnimalName.text.toString())
                 }
                 R.id.check_sound_time -> {
                     val sound = graphHandler.createDataSound(true, binding.textAnimalName, binding.textAnimalType)
