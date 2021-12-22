@@ -10,6 +10,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 
 import com.jjoe64.graphview.series.DataPoint
+import com.plcoding.soundrecognition.MainActivity
 import com.plcoding.soundrecognition.data.models.DataSound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,9 +21,10 @@ const val SAMPLE_RATE = 10100
 const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
 const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
 
-class RecordHandler @ViewModelInject constructor(
-    val graphHandler: GraphHandler
-): ViewModel() {
+class RecordHandler(
+    val graphHandler: GraphHandler,
+    val mainActivity: MainActivity
+) {
 
     private var mAudioRecord: AudioRecord? = null
     private var recorder: MediaRecorder? = null
@@ -52,26 +54,33 @@ class RecordHandler @ViewModelInject constructor(
                 Log.e("", "prepare() failed")
             }
         }
-        isPlaying = true
         mAudioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, mMinBufferSize)
         mAudioRecord!!.startRecording()
+        isPlaying = true
+        mainActivity.invalidateOptionsMenu()
 
-        val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
-        if(playedOut) {
-            stopPlaying()
-        }
+        mRecordThread = Thread(Runnable {
+            val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
+            if(playedOut && isPlaying) {
+                stopPlaying()
+            }
+        })
+        mRecordThread!!.start()
+
+        //val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
     }
 
     fun stopPlaying() {
         mMediaPlayer?.release()
         mMediaPlayer = null
         isPlaying = false
-        Thread.sleep(100)
+        //Thread.sleep(100)
 
         mAudioRecord?.stop()
         mRecordThread = null
         mAudioRecord?.release()
         mAudioRecord = null
+        mainActivity.invalidateOptionsMenu()
     }
 
     fun startRecording(fileName:String) {

@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fileName = "${externalCacheDir?.absolutePath}/currentSound.3gp"
-        recordHandler = RecordHandler(graphHandler)
+        recordHandler = RecordHandler(graphHandler, this)
 
         lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
@@ -135,11 +135,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.device_access_audio_play -> {
                     recordHandler.startPlaying(binding.tvResult, binding.textAnimalName, binding.textAnimalType, fileName)
-                    invalidateOptionsMenu()
+                    //invalidateOptionsMenu()
                 }
                 R.id.device_access_audio_stop -> {
                     recordHandler.stopPlaying()
-                    invalidateOptionsMenu()
+                    //invalidateOptionsMenu()
                 }
                 R.id.get_sounds -> {
                     viewModel.getSounds()
