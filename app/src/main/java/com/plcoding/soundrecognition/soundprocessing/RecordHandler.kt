@@ -22,8 +22,7 @@ const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
 const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
 
 class RecordHandler(
-    val graphHandler: GraphHandler,
-    val mainActivity: MainActivity
+    val graphHandler: GraphHandler
 ) {
 
     private var mAudioRecord: AudioRecord? = null
@@ -34,7 +33,7 @@ class RecordHandler(
     var currentDuration:Long = 0
 
 
-    fun startPlaying(textTest: TextView, animalNameText: TextView, animalTypeText: TextView, fileName:String) {
+    fun startPlaying(textTest: TextView, animalNameText: TextView, animalTypeText: TextView, fileName:String): Boolean {
         graphHandler.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
         graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
         graphHandler.mFullFreqSeries?.resetData(arrayOf<DataPoint>())
@@ -56,31 +55,16 @@ class RecordHandler(
         }
         mAudioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, mMinBufferSize)
         mAudioRecord!!.startRecording()
-        isPlaying = true
-        mainActivity.invalidateOptionsMenu()
 
-        mRecordThread = Thread(Runnable {
-            val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
-            if(playedOut && isPlaying) {
-                stopPlaying()
-            }
-        })
-        mRecordThread!!.start()
+        val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
 
-        //val playedOut = graphHandler.replayGraphView(mAudioRecord!!)
+        return playedOut
     }
 
     fun stopPlaying() {
         mMediaPlayer?.release()
-        mMediaPlayer = null
-        isPlaying = false
-        //Thread.sleep(100)
-
         mAudioRecord?.stop()
-        mRecordThread = null
         mAudioRecord?.release()
-        mAudioRecord = null
-        mainActivity.invalidateOptionsMenu()
     }
 
     fun startRecording(fileName:String) {
@@ -89,7 +73,6 @@ class RecordHandler(
             mMinBufferSize
         )
         mAudioRecord!!.startRecording()
-        isRecording = true
 
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -108,30 +91,21 @@ class RecordHandler(
 
         mRecordThread = Thread(Runnable { graphHandler.updateGraphView(mAudioRecord!!) })
         mRecordThread!!.start()
-        soundStartingTime = System.currentTimeMillis()
     }
 
     fun stopRecording() {
-        currentDuration = System.currentTimeMillis() - soundStartingTime
         if (mAudioRecord != null) {
             if (isRecording) {
                 mAudioRecord?.stop()
-                isRecording = false
-                Thread.sleep(100)
                 // tutaj cos zmienic z tym sleep?
-                mRecordThread = null
             }
             mAudioRecord?.release()
-            mAudioRecord = null
-            graphHandler.mAmplitudeSeries?.resetData(arrayOf<DataPoint>())
-            graphHandler.mTimeSeries?.resetData(arrayOf<DataPoint>())
         }
 
         recorder?.apply {
             stop()
             release()
         }
-        recorder = null
     }
 
 
