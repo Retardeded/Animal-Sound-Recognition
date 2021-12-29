@@ -1,5 +1,7 @@
 package com.plcoding.soundrecognition.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.plcoding.soundrecognition.server.SoundService
 import com.plcoding.soundrecognition.server.SoundServiceHandler
 import com.plcoding.soundrecognition.util.DispatcherProvider
@@ -24,7 +26,9 @@ object AppModule {
     @Provides
     fun provideCurrencyApi(): SoundService = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(GsonBuilder()
+            .setLenient()
+            .create()))
         .build()
         .create(SoundService::class.java)
 

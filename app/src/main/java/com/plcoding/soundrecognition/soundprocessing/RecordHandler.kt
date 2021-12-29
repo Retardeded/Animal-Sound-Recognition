@@ -28,9 +28,6 @@ class RecordHandler(
     private var mAudioRecord: AudioRecord? = null
     private var recorder: MediaRecorder? = null
     private var mMediaPlayer: MediaPlayer? = null
-    private var mRecordThread: Thread? = null
-    var soundStartingTime:Long = 0
-    var currentDuration:Long = 0
 
 
     fun startPlaying(textTest: TextView, animalNameText: TextView, animalTypeText: TextView, fileName:String): Boolean {
@@ -89,8 +86,8 @@ class RecordHandler(
             start()
         }
 
-        mRecordThread = Thread(Runnable { graphHandler.updateGraphView(mAudioRecord!!) })
-        mRecordThread!!.start()
+        graphHandler.updateGraphView(mAudioRecord!!)
+        //mRecordThread!!.start()
     }
 
     fun stopRecording() {

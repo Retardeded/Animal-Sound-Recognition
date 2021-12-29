@@ -1,10 +1,6 @@
 package com.plcoding.soundrecognition.server
 
-import com.plcoding.soundrecognition.data.models.PowerSpectrumCoefficient
-import com.plcoding.soundrecognition.data.models.SoundType
-import com.plcoding.soundrecognition.data.models.SoundsFreqCoefficients
-import com.plcoding.soundrecognition.data.models.SoundsTimeCoefficients
-import com.plcoding.soundrecognition.data.models.DataSound
+import com.plcoding.soundrecognition.data.models.*
 import retrofit2.Response
 import retrofit2.http.*
 import retrofit2.http.GET
@@ -21,7 +17,7 @@ interface SoundService {
     suspend fun getTypes(): Response<List<SoundType>>
 
     @DELETE("api/sounds/{id}")
-    suspend fun deleteSound( @Path("id") id:String): Response<Any>
+    suspend fun deleteSound( @Path("id") id:String): Response<ServerMessage>
 
     @GET("api/sounds/{id}")
     suspend fun getSound( @Path("id") id:String): Response<DataSound>

@@ -23,7 +23,7 @@ class SoundServiceHandler @Inject constructor(private val api: SoundService) {
     }
 
 
-    suspend fun deleteSound(id:String): Resource<Any> {
+    suspend fun deleteSound(id:String): Resource<ServerMessage> {
         return try {
             val response = api.deleteSound(id)
             val result = response.body()
