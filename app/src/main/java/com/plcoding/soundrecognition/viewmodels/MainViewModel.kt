@@ -66,7 +66,15 @@ class MainViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatchers.io) {
             _conversion.value = SoundEvent.Loading
             when(val ratesResponse = soundServiceHandler.getSound(id)) {
-                is Resource.Error -> _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                is Resource.Error -> {
+                    if(ratesResponse.message == "") {
+                        _conversion.value = SoundEvent.Failure(
+                            "Sound with that name was not found"
+                        )
+                    } else {
+                        _conversion.value = SoundEvent.Failure(ratesResponse.message!!)
+                    }
+                }
                 is Resource.Success -> {
                     val soundData = ratesResponse.data!!
                     dataGraphs.currentRecordTimeDomain = loadDataSound(soundData.pointsInGraphs, soundData.timeDomainPoints, false)
