@@ -120,6 +120,7 @@ class GraphHandler @ViewModelInject constructor(): ViewModel() {
         var index = 0
         val audioData = ShortArray(mMinBufferSize)
         val numOfGraphs = dataGraphs.numOfGraphs.toInt()
+        println("NUM::" + dataGraphs.pointsInGraphs.toInt())
         val num = dataGraphs.pointsInGraphs.toInt()
         val dataAmplitudeFullSignal = DoubleArray((num/2).toInt())
 

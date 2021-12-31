@@ -1,14 +1,14 @@
 package com.plcoding.soundrecognition.data.models
 
 data class DataSoundParameters(val typeName:String, val signalEnvelope:List<Integer>,
-                          val rootMeanSquareEnergy:List<Integer>, val zeroCrossingDensity:Integer,
+                          val rootMeanSquareEnergy:List<Integer>, val zeroCrossingDensity:List<Integer>,
                           val powerSpectrum:List<Integer>, val spectralCentroids:List<Double>,
                           val spectralFluxes:List<Integer>, val spectralRollOffPoints:List<Double>) {
     override fun toString(): String {
         return "Parameters:\n" +
-                "zeroCrossingDensity=$zeroCrossingDensity \n" +
                 "signalEnvelope=$signalEnvelope \n " +
                 "rootMeanSquareEnergy=$rootMeanSquareEnergy \n" +
+                "zeroCrossingDensity=$zeroCrossingDensity \n" +
                 "powerSpectrum=$powerSpectrum \n " +
                 "spectralCentroids=${formatList(spectralCentroids)} \n " +
                 "spectralFluxes=$spectralFluxes \n " +
