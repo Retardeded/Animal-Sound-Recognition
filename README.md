@@ -13,3 +13,4 @@ https://github.com/Retardeded/SoundRecognition/blob/master/app/src/main/java/com
 
 Lastly, recognition depends on database, so you have to create your mini data base with some sounds first, that is record and upload them to server through this app,
 then you can check how similar they are to sound you want to identify.
+Quite useless project.
